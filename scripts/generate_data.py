@@ -19,6 +19,8 @@ def generate_kmeans_data(
     """
     print(f"Đang sinh dữ liệu KMEANS dạng {data_type.upper()}: N = {n_samples}, D = {n_features}, K = {n_clusters} -> {file_name}")
     
+    span = high - low   # Độ đo của không gian
+
     if data_type == "blobs":
         # Loại 1: Dữ liệu phân cụm đồng nhất
         X = make_blobs(
@@ -26,7 +28,7 @@ def generate_kmeans_data(
             n_features = n_features,
             centers = n_clusters,
             center_box = (low, high),
-            cluster_std = 1.5,
+            cluster_std = 0.02 * span, # Dữ liệu sinh chiếm 2% không gian
             random_state = seed
         )
         data = X[0]
@@ -36,11 +38,16 @@ def generate_kmeans_data(
         data = np.random.uniform(low, high, size = (n_samples, n_features))
     elif data_type == "varied_std":
         # Loai 3: Dữ liệu phân cụm không đồng nhất
-        stds = [0.5 * (i+1) for i in range(n_clusters)]
+        stds = np.linspace(
+            0.005 * span, 
+            0.05 * span, 
+            n_clusters
+        )   # Mỗi cụm có độ phân tán khác nhau: 0.5% -> 5% không gian
         X = make_blobs(
             n_samples = n_samples,
             n_features = n_features,
             centers = n_clusters,
+            center_box = (low, high),
             cluster_std = stds,
             random_state = seed
         )
@@ -51,7 +58,7 @@ def generate_kmeans_data(
     # Thực hiện tạo file (nếu chưa tạo) và ghi dữ liệu sinh vào file
     os.makedirs(os.path.dirname(file_name), exist_ok = True)
     with open(file_name, "w", encoding = "utf-8") as f:
-        f.write(f"{n_samples},{n_features}\n")
+        f.write(f"{n_samples},{n_features},{n_clusters}\n")
         np.savetxt(f, data, delimiter = ",", fmt = "%.6f")
     
     print(f"Dữ liệu KMEANS dạng {data_type} đã được lưu vào {file_name}")
@@ -77,10 +84,38 @@ def generate_dot_product_data(
     # Thực hiện tạo file (nếu chưa có file) và tiến hành ghi dữ liệu
     os.makedirs(os.path.dirname(file_name), exist_ok = True)
     with open(file_name, "w", encoding = "utf-8") as f:
+        f.write(f"{size}\n")
         np.savetxt(f, [A], delimiter = ",", fmt = "%.6f")
         np.savetxt(f, [B], delimiter = ",", fmt = "%.6f")
 
     print(f"Dữ liệu TVH đã lưu vào {file_name}")
     
 if __name__ == "__main__":
-    pass
+    # 1. Cấu hình dữ liệu cho bài Tích vô hướng
+    DOT_DATASETS = [
+        ("data/dot_product/vec_small.csv",  100000),
+        ("data/dot_product/vec_medium.csv", 5000000),
+        ("data/dot_product/vec_large.csv",  20000000),
+    ]
+
+    # 2. Cấu hình dữ liệu cho bài K-means
+    KMEANS_DATASETS = [
+        ("data/kmeans/blobs/small.csv",     10000,   2,  3,  "blobs"),
+        ("data/kmeans/blobs/medium.csv",    100000,  5,  5,  "blobs"),
+        ("data/kmeans/blobs/large.csv",     1000000, 10, 10, "blobs"),
+
+        ("data/kmeans/uniform/small.csv",   10000,   2,  3,  "uniform"),
+        ("data/kmeans/uniform/medium.csv",  100000,  5,  5,  "uniform"),
+        ("data/kmeans/uniform/large.csv",   1000000, 10, 10, "uniform"),
+
+        ("data/kmeans/varied/small.csv",    10000,   2,  3,  "varied_std"),
+        ("data/kmeans/varied/medium.csv",   100000,  5,  5,  "varied_std"),
+        ("data/kmeans/varied/large.csv",    1000000, 10, 10, "varied_std"),
+    ]
+
+    print("=== BẮT ĐẦU SINH DỮ LIỆU CHO TOÀN BỘ DỰ ÁN ===")
+    for cfg in DOT_DATASETS:
+        generate_dot_product_data(*cfg)
+    print("-" * 50)
+    for cfg in KMEANS_DATASETS:
+        generate_kmeans_data(*cfg)

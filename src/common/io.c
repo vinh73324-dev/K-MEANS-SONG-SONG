@@ -77,12 +77,11 @@ int append_dot_product_benchmark(
         return -1;
     }
 
-    double seq_zone_time = init_time + io_time; // Thời gian vùng tuần tự
-    double total_time = seq_zone_time + compute_time;
+    double total_time = init_time + io_time + compute_time;
 
-    fprintf(file, "%s,%s,%zu,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+    fprintf(file, "%s,%s,%zu,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f\n",
             algo, size_label, n, threads, run_id,
-            init_time, io_time, compute_time, seq_zone_time, total_time, dot_result);
+            init_time, io_time, compute_time, total_time, dot_result);
 
     fclose(file);
     return 0;
@@ -184,12 +183,11 @@ int append_kmeans_benchmark(
         return -1;
     }
 
-    double seq_zone_time = io_time + init_time; // Thời gian vùng tuần tự
-    double total_time = seq_zone_time + compute_time;
+    double total_time = io_time + init_time + compute_time;
 
-    fprintf(file, "%s,%s,%s,%d,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.4f,%d\n",
+    fprintf(file, "%s,%s,%s,%d,%d,%d,%.6f,%.6f,%.6f,%.6f,%.4f,%d\n",
             algo, data_type, size_label, k, threads, run_id,
-            io_time, init_time, compute_time, seq_zone_time, total_time, sse, iterations);
+            io_time, init_time, compute_time, total_time, sse, iterations);
 
     fclose(file);
     return 0;

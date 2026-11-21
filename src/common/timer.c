@@ -5,7 +5,7 @@
 // Hàm khởi tạo bộ đếm thời gian (reset toàn bộ giá trị về 0.0)
 void timer_init(ExecutionTimer* timer){
     if(!timer){
-        printf(stderr, "Loi: Bo dem thoi gian khong duoc null\n");
+        fprintf(stderr, "Loi: Bo dem thoi gian khong duoc null\n");
         return;
     }
     timer->io_time = 0.0;

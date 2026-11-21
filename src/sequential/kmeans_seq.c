@@ -43,6 +43,15 @@ void init_random_centroids(
     free(indices);
 }
 
+void free_kmeans_result(KmeansResult* result){
+    if (result){
+        free(result->centroids);
+        free(result->labels);
+        result->centroids = NULL;
+        result->labels = NULL;
+    }
+}
+
 KmeansResult run_kmeans_seq(
     const double* data,
     size_t n,

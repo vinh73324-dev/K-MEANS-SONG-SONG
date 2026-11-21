@@ -16,6 +16,9 @@ typedef struct{
     double compute_time;
 } KmeansResult;
 
+// Giải phóng bộ nhớ với cấu trúc KmeansResult
+void free_kmeans_result(KmeansResult* result);
+
 // Phương thức khởi tạo tâm cụm bằng cách chọn ngẫu nhiên K điểm trong bộ dữ liệu
 void init_random_centroids(
     const double* data, 

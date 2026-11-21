@@ -77,9 +77,14 @@ int append_dot_product_benchmark(
         return -1;
     }
 
+    fseek(file, 0, SEEK_END);
+    if (ftell(file) == 0) {
+        fprintf(file, "mode,size_label,n,threads,run_id,init_time,io_time,compute_time,total_time,dot_result\n");
+    }
+
     double total_time = init_time + io_time + compute_time;
 
-    fprintf(file, "%s,%s,%zu,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f\n",
+    fprintf(file, "%s,%s,%zu,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6lf\n",
             algo, size_label, n, threads, run_id,
             init_time, io_time, compute_time, total_time, dot_result);
 
@@ -181,6 +186,11 @@ int append_kmeans_benchmark(
     if (file == NULL){
         fprintf(stderr, "Loi: Khong the mo file\n");
         return -1;
+    }
+
+    fseek(file, 0, SEEK_END);
+    if (ftell(file) == 0) {
+        fprintf(file, "mode,data_type,size_label,k,threads,run_id,io_time,init_time,compute_time,total_time,sse,iterations\n");
     }
 
     double total_time = io_time + init_time + compute_time;
